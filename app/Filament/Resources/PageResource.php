@@ -2,10 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ArticleResource\Pages;
-use App\Filament\Resources\ArticleResource\RelationManagers;
-use App\Models\Article;
-use App\Models\Category;
+use App\Filament\Resources\PageResource\Pages;
+use App\Filament\Resources\PageResource\RelationManagers;
+use App\Models\Page;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
@@ -19,9 +18,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ArticleResource extends Resource
+class PageResource extends Resource
 {
-    protected static ?string $model = Article::class;
+    protected static ?string $model = Page::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -30,14 +29,12 @@ class ArticleResource extends Resource
         return $form
             ->schema([
                 TextInput::make('title')->required()->placeholder('Title'),
-                Select::make('category_id')->label('Category')->options(Category::all()->pluck('name', 'id')),
-                TextInput::make('author')->placeholder('Author'),
-                FileUpload::make('image'),
                 RichEditor::make('content')->columnSpan(2),
+                FileUpload::make('image')->columnSpan(2),
                 Select::make('status')->options([
                     1 => 'Active',
                     0 => 'Block'
-                ])
+                ])->required()
             ]);
     }
 
@@ -45,10 +42,8 @@ class ArticleResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('title')->searchable(),
-                TextColumn::make('author'),
+                TextColumn::make('title'),
                 TextColumn::make('status'),
-
             ])
             ->filters([
                 //
@@ -73,9 +68,9 @@ class ArticleResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListArticles::route('/'),
-            'create' => Pages\CreateArticle::route('/create'),
-            'edit' => Pages\EditArticle::route('/{record}/edit'),
+            'index' => Pages\ListPages::route('/'),
+            'create' => Pages\CreatePage::route('/create'),
+            'edit' => Pages\EditPage::route('/{record}/edit'),
         ];
     }
 }

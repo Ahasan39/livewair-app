@@ -2,12 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ArticleResource\Pages;
-use App\Filament\Resources\ArticleResource\RelationManagers;
-use App\Models\Article;
-use App\Models\Category;
+use App\Filament\Resources\FaqResource\Pages;
+use App\Filament\Resources\FaqResource\RelationManagers;
+use App\Models\Faq;
 use Filament\Forms;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -19,9 +17,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ArticleResource extends Resource
+class FaqResource extends Resource
 {
-    protected static ?string $model = Article::class;
+    protected static ?string $model = Faq::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -29,15 +27,12 @@ class ArticleResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')->required()->placeholder('Title'),
-                Select::make('category_id')->label('Category')->options(Category::all()->pluck('name', 'id')),
-                TextInput::make('author')->placeholder('Author'),
-                FileUpload::make('image'),
-                RichEditor::make('content')->columnSpan(2),
+                TextInput::make('question')->placeholder('Question')->required(),
+                RichEditor::make('answer')->required()->columnSpan(2),
                 Select::make('status')->options([
                     1 => 'Active',
                     0 => 'Block'
-                ])
+                ])->required()
             ]);
     }
 
@@ -45,10 +40,8 @@ class ArticleResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('title')->searchable(),
-                TextColumn::make('author'),
+                TextColumn::make('question'),
                 TextColumn::make('status'),
-
             ])
             ->filters([
                 //
@@ -73,9 +66,9 @@ class ArticleResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListArticles::route('/'),
-            'create' => Pages\CreateArticle::route('/create'),
-            'edit' => Pages\EditArticle::route('/{record}/edit'),
+            'index' => Pages\ListFaqs::route('/'),
+            'create' => Pages\CreateFaq::route('/create'),
+            'edit' => Pages\EditFaq::route('/{record}/edit'),
         ];
     }
 }
